@@ -31,9 +31,10 @@ At the end, you should have:
 
 **Clone repo and Update env properties**
 
-Clone the repo
+Clone the repo `git clone https://github.com/shivlim/axelarmonitor.git`
 
-Rename env file to .env file and update properties accordingly.
+Rename env file to .env file and update properties accordingly. 
+`mv env .env`
 
 Following are the properties used in the tool.
 
@@ -54,7 +55,8 @@ Following are the properties used in the tool.
 
 # Running the application
 
-Clone the github repo.
+Change directory to project `cd axelarmonitor`
+
 After that run the following commands
 - `npm install`
 - `node index.js`  This command should be ran in tmux or screen or using service file shown below
