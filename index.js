@@ -18,6 +18,7 @@ const MOONBEAM_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth
 const FANTOM_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
 const AVAX_RPC_ENDPOINT_REQUEST = {"jsonrpc": "2.0","method": "info.isBootstrapped","params":{"chain":"C"},"id":1}
 const POLYGON_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
+const AXELARBROADCASTERADDRESS = process.env.AXELAR_BROADCASTER_ADDRESS
 
 
 
@@ -26,7 +27,8 @@ const slimbot = new Slimbot(TELEGRAMBOTTOKEN);
 
 ws.on('open', function open() {
     console.log('Open now')
-    ws.send('{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'axelar1p8vpmajj4lym6x7r8wn0zjpdthah6ghx80lphe\' AND depositConfirmation.value=\'true\'"}}');
+    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'true\'"}}`
+    ws.send(subscriberequest);
 });
 
 async function deadmansswitch(){
