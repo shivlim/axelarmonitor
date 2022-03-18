@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+const WebSocket = require('ws');
 const axios = require('axios');
 const Slimbot = require('slimbot');
 const https = require("https");
