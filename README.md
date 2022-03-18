@@ -29,7 +29,9 @@ At the end, you should have:
 4. The chat ID of your chat with the bot *(at least one)*
 
 
-**Update env properties**
+**Clone repo and Update env properties**
+
+Clone the repo
 
 Rename env file to .env file and update properties accordingly.
 
