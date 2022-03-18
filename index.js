@@ -28,6 +28,8 @@ ws.on('message', function message(data) {
             .then(function () {
                 // always executed
             });
+    }else{
+        console.log('no own property result')
     }
 
 });
