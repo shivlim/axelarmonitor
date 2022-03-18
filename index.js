@@ -28,7 +28,7 @@ const slimbot = new Slimbot(TELEGRAMBOTTOKEN);
 
 ws.on('open', function open() {
     console.log('Open now')
-    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'true\'"}}`
+    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'false\'"}}`
     ws.send(subscriberequest);
 });
 
