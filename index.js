@@ -14,7 +14,7 @@ ws.on('message', function message(data) {
     console.log('received: %s', data);
     console.log(typeof data);
     const response = JSON.parse(data)
-    if(response.hasOwnProperty('result')){
+    if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
         const txhash = response['result']['events']['tx.hash']
         const txurl = 'http://localhost:1317/cosmos/tx/v1beta1/txs/' + txhash;
         console.log('txurl is' + txurl)
