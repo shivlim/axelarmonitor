@@ -1,6 +1,6 @@
 # axelarmonitor
 Tool to monitor vlad votes in axelar as well as check if external RPC nodes are in sync.
-It sends a telegram alert to the bot configured in case of NO votes or out of sync/doen node status.
+It sends a telegram alert to the bot configured in case of NO votes or out of sync/down node status.
 
 # Prerequisites
 **Install nodejs**
