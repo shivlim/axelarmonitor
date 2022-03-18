@@ -19,6 +19,7 @@ const FANTOM_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_s
 const AVAX_RPC_ENDPOINT_REQUEST = {"jsonrpc": "2.0","method": "info.isBootstrapped","params":{"chain":"C"},"id":1}
 const POLYGON_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
 const AXELARBROADCASTERADDRESS = process.env.AXELAR_BROADCASTER_ADDRESS
+const TCP_CONNECT_TIMEOUT_IN_MS = 10000
 
 
 
@@ -27,16 +28,13 @@ const slimbot = new Slimbot(TELEGRAMBOTTOKEN);
 
 ws.on('open', function open() {
     console.log('Open now')
-    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'false\'"}}`
+    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'true\'"}}`
     ws.send(subscriberequest);
 });
 
-async function deadmansswitch(){
-    const alertmsg = `<b>ALIVE</b>`;
-    slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'HTML'});
-}
 
-async function checksyncstatus(){
+
+async function checksyncstatus(...deadmanswitchflag){
     let rpcrequestmap = [
         {
             "rpcendpoint":ETHRPCENDPOINT,
@@ -61,61 +59,73 @@ async function checksyncstatus(){
 
     ]
 
-    Promise.all(rpcrequestmap.map((endpoint) => axios.post(endpoint.rpcendpoint,endpoint.rpcendpointrequest)))
-        .then(([{data: ethdata}, {data: moonbeamdata}, {data: fantomdata}, {data: avaxdata},{data: polygondata}] )=> {
-          console.log({ ethdata, moonbeamdata, fantomdata, avaxdata,polygondata });
-          let synced='✅'
-          let outofsync='❌'
-            let ethstatus=outofsync;
-            let moonbeamstatus=outofsync;
-            let fantomstatus=outofsync;
-            let avaxstatus=outofsync;
-            let polygonstatus=outofsync;
-            if(!ethdata.result){
-                ethstatus = synced;
-            }
-            if(!moonbeamdata.result){
-                moonbeamstatus = synced;
-            }
-            if(!fantomdata.result){
-                fantomstatus = synced;
-            }
-            if(avaxdata.result.isBootstrapped){
-                avaxstatus = synced;
-            }
-            if(!polygonstatus.result){
-                polygonstatus = synced;
-            }
-            const alertmsg = `<b>ETHSyncStatus</b>: ${ethstatus}
-                               <b>MoonbeamSyncStatus</b>: ${moonbeamstatus}
-                               <b>FantomStatus</b>: ${fantomstatus}
-                               <b>AvaxStatus</b>: ${avaxstatus}
-                               <b>PolygonStatus</b>: ${polygonstatus}`;
-            slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'HTML'});
+    let source = axios.CancelToken.source();
+    setTimeout(() => {
+        source.cancel();
+    }, TCP_CONNECT_TIMEOUT_IN_MS);
 
+    Promise.allSettled(rpcrequestmap.map((endpoint) => axios.post(endpoint.rpcendpoint,endpoint.rpcendpointrequest,{cancelToken: source.token})))
+        .then((results) => {
+            let ethresult = results[0]
+            let moonbeamresult = results[1]
+            let fantomresult = results[2]
+            let avaxresult = results[3]
+            let polygonresult = results[4]
+            let ethstatus=false;
+            let moonbeamstatus=false;
+            let fantomstatus=false;
+            let avaxstatus=false;
+            let polygonstatus=false;
 
-    });
+            if(ethresult.status === 'fulfilled' && !ethresult.value.data.result){
+                ethstatus=true;
+            }
+            if(moonbeamresult.status === 'fulfilled' && !moonbeamresult.value.data.result){
+                moonbeamstatus=true;
+            }
+            if(fantomresult.status === 'fulfilled' && !fantomresult.value.data.result){
+                fantomstatus=true;
+            }
+            if(avaxresult.status === 'fulfilled' && avaxresult.value.data.result.isBootstrapped){
+                avaxstatus=true;
+            }
+            if(polygonresult.status === 'fulfilled' && !polygonresult.value.data.result){
+                polygonstatus=true;
+            }
+            if(!ethstatus || !moonbeamstatus || !fantomstatus || !avaxstatus || !polygonstatus || deadmanswitchflag[0]){
+                const alertmsg = `
+                                __RPC Chain Status__
+                                \`\`\`
+                               ETHStatus:     ${getlogo(ethstatus)}
+                               MbeamStatus:   ${getlogo(moonbeamstatus)}
+                               FantomStatus:  ${getlogo(fantomstatus)}
+                               AvaxStatus:    ${getlogo(avaxstatus)}
+                               PolygonStatus: ${getlogo(polygonstatus)}
+                                \`\`\`
+                                `;
+                slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'MarkdownV2'});
+            }
+        }).catch(function(err) {
+            console.log(err.message);
+        });
+
 
 }
 
 function alertfornovotes(txurl){
     axios.get(txurl)
         .then(function (response) {
-            // handle success
             const responsebody = response.data;
             console.log(responsebody);
             const chain = responsebody['tx']['body']['messages'][0]['inner_message']['chain']
             console.log("chain is %s",chain);
-            const alertmsg = `<b>ALERT</b>: Voted <b>NO</b> on Chain <b>${chain}</b>`;
-            slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'HTML'});
+            const alertmsg = `*ALERT: Voted *NO on Chain *${chain}*`;
+            slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'MarkdownV2'});
         })
         .catch(function (error) {
             console.log(error);
-            const alertmsg = `<b>ALERT</b>: Voted <b>NO</b>`;
-            slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'HTML'});
-        })
-        .then(function () {
-            // always executed
+            const alertmsg = `*ALERT: Voted *NO`;
+            slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'MarkdownV2'});
         });
 
 }
@@ -135,6 +145,12 @@ ws.on('message', function message(data) {
 
 });
 
-setInterval(checksyncstatus, RPCSYNCCHECKRUNINTERVALINMINS * 60  * 1000);
-setInterval(deadmansswitch, DEADMANSSWITCHRUNINTERVALINMINS * 60  * 1000);
-deadmansswitch();
+function getlogo(ethstatus) {
+    if(ethstatus)
+        return '✅';
+    else return '❌';
+}
+
+setInterval(checksyncstatus, RPCSYNCCHECKRUNINTERVALINMINS * 60  * 1000,false);
+setInterval(checksyncstatus, DEADMANSSWITCHRUNINTERVALINMINS * 60  * 1000,true);
+checksyncstatus(true);
