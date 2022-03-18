@@ -21,7 +21,9 @@ ws.on('message', function message(data) {
         axios.get(txurl)
             .then(function (response) {
                 // handle success
-                console.log(response);
+                const responsebody = response.data;
+                console.log(responsebody);
+                console.log(responsebody['tx']['body']['messages'][0]['inner_message']['chain']);
             })
             .catch(function (error) {
                 // handle error
