@@ -77,19 +77,19 @@ async function checksyncstatus(...deadmanswitchflag){
             let avaxstatus=false;
             let polygonstatus=false;
 
-            if(ethresult.status === 'fulfilled' && !ethresult.value.data.result){
+            if(ethresult.status === 'fulfilled' && ethresult.value.data.hasOwnProperty('result') && !ethresult.value.data.result){
                 ethstatus=true;
             }
-            if(moonbeamresult.status === 'fulfilled' && !moonbeamresult.value.data.result){
+            if(moonbeamresult.status === 'fulfilled' && moonbeamresult.value.data.hasOwnProperty('result') && !moonbeamresult.value.data.result){
                 moonbeamstatus=true;
             }
-            if(fantomresult.status === 'fulfilled' && !fantomresult.value.data.result){
+            if(fantomresult.status === 'fulfilled' && fantomresult.value.data.hasOwnProperty('result') && !fantomresult.value.data.result){
                 fantomstatus=true;
             }
-            if(avaxresult.status === 'fulfilled' && avaxresult.value.data.result.isBootstrapped){
+            if(avaxresult.status === 'fulfilled' && avaxresult.value.data.hasOwnProperty('result') && avaxresult.value.data.result.isBootstrapped){
                 avaxstatus=true;
             }
-            if(polygonresult.status === 'fulfilled' && !polygonresult.value.data.result){
+            if(polygonresult.status === 'fulfilled' && polygonresult.value.data.hasOwnProperty('result') && !polygonresult.value.data.result){
                 polygonstatus=true;
             }
             if(!ethstatus || !moonbeamstatus || !fantomstatus || !avaxstatus || !polygonstatus || deadmanswitchflag[0]){
@@ -132,7 +132,6 @@ function alertfornovotes(txurl){
 
 ws.on('message', function message(data) {
     console.log('received: %s', data);
-    console.log(typeof data);
     const response = JSON.parse(data)
     if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
         const txhash = response['result']['events']['tx.hash']
@@ -140,7 +139,6 @@ ws.on('message', function message(data) {
         console.log('txurl is' + txurl)
         setTimeout(() => { alertfornovotes(txurl) }, 20000);
     }else{
-        console.log('no own property result')
     }
 
 });
