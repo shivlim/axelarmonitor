@@ -12,21 +12,23 @@ ws.on('open', function open() {
 
 ws.on('message', function message(data) {
     console.log('received: %s', data);
-    const txhash = data['result']['events']['tx.hash']
-    const txurl = 'http://localhost:1317/cosmos/tx/v1beta1/txs/' + txhash;
-    console.log('txurl is' + txurl)
-    axios.get(txurl)
-        .then(function (response) {
-            // handle success
-            console.log(response);
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
+    if(data.hasOwnProperty('result')){
+        const txhash = data['result']['events']['tx.hash']
+        const txurl = 'http://localhost:1317/cosmos/tx/v1beta1/txs/' + txhash;
+        console.log('txurl is' + txurl)
+        axios.get(txurl)
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+    }
 
 });
 
