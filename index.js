@@ -26,13 +26,7 @@ const TCP_CONNECT_TIMEOUT_IN_MS = 10000
 const ws = new WebSocket(WSURL);
 const slimbot = new Slimbot(TELEGRAMBOTTOKEN);
 
-ws.on('open', function open() {
-    console.log('Open now')
-    const subscriberequest=`{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'false\'"}}`
-    ws.send(subscriberequest);
-});
-
-
+subscribetowss();
 
 async function checksyncstatus(...deadmanswitchflag){
     let rpcrequestmap = [
@@ -130,17 +124,30 @@ function alertfornovotes(txurl){
 
 }
 
+function subscribetowss() {
+    ws.on('open', function open() {
+        console.log('Open now')
+        const subscriberequest = `{ "jsonrpc": "2.0","method": "subscribe","id": 0,"params": {"query": "tm.event=\'Tx\' AND depositConfirmation.action=\'vote\' AND transfer.recipient=\'${AXELARBROADCASTERADDRESS}\' AND depositConfirmation.value=\'true\'"}}`
+        ws.send(subscriberequest);
+    });
+}
+
 ws.on('message', function message(data) {
     console.log('received: %s', data);
     const response = JSON.parse(data)
-    if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
+    const error = response.hasOwnProperty('error')  && response['error'].hasOwnProperty("data");
+    if(error){
+        slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss' + response,{parse_mode: 'MarkdownV2'});
+    }
+    if(error && response['error']['data']==='subscription was cancelled (reason: Tendermint exited)'){
+        subscribetowss();
+        slimbot.sendMessage(TELEGRAMCHATID, 'resubscribed after error',{parse_mode: 'MarkdownV2'});
+    }else if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
         const txhash = response['result']['events']['tx.hash']
         const txurl = TXURI + txhash;
         console.log('txurl is' + txurl)
         setTimeout(() => { alertfornovotes(txurl) }, 20000);
-    }else{
     }
-
 });
 
 function getlogo(ethstatus) {
