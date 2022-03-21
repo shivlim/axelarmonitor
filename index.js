@@ -137,7 +137,7 @@ ws.on('message', function message(data) {
     const response = JSON.parse(data)
     const error = response.hasOwnProperty('error')  && response['error'].hasOwnProperty("data");
     if(error){
-        slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss' + response,{parse_mode: 'MarkdownV2'});
+        slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss subscription check logs',{parse_mode: 'MarkdownV2'});
     }
     if(error && response['error']['data']==='subscription was cancelled (reason: Tendermint exited)'){
         subscribetowss();
@@ -155,6 +155,18 @@ function getlogo(ethstatus) {
         return '✅';
     else return '❌';
 }
+ws.on('error', function error(event) {
+    console.log('wss error event')
+    console.log(event)
+});
+
+
+
+ws.on('close', function close(event) {
+    console.log('wss close event')
+    console.log(event)
+    ws.terminate()
+});
 
 setInterval(checksyncstatus, RPCSYNCCHECKRUNINTERVALINMINS * 60  * 1000,false);
 setInterval(checksyncstatus, DEADMANSSWITCHRUNINTERVALINMINS * 60  * 1000,true);
