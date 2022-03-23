@@ -3,6 +3,8 @@ Tool to monitor vlad votes in axelar as well as check if external RPC nodes are 
 It sends a telegram alert to the bot configured in case of NO votes or out of sync/down node status.
 
 # Prerequisites
+Any installation of external software should be done in **non-root** account
+
 **Install nodejs**
 - Install nvm using this one liner [here](https://github.com/nvm-sh/nvm#installing-and-updating) and
   logout and log back in
@@ -89,3 +91,6 @@ sudo systemctl daemon-reload
 sudo systemctl enable axelarmonitor
 sudo systemctl restart axelarmonitor && journalctl -u axelarmonitor -f -o cat
 ```
+
+**Preview of Alert on Telegram**
+![image info](telegram_preview.jpeg)
