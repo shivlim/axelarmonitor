@@ -139,10 +139,7 @@ ws.on('message', function message(data) {
     if(error){
         slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss subscription check logs',{parse_mode: 'MarkdownV2'});
     }
-    if(error && response['error']['data']==='subscription was cancelled (reason: Tendermint exited)'){
-        subscribetowss();
-        slimbot.sendMessage(TELEGRAMCHATID, 'resubscribed after error',{parse_mode: 'MarkdownV2'});
-    }else if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
+    if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
         const txhash = response['result']['events']['tx.hash']
         const txurl = TXURI + txhash;
         console.log('txurl is' + txurl)
