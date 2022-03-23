@@ -137,7 +137,7 @@ ws.on('message', function message(data) {
     const response = JSON.parse(data)
     const error = response.hasOwnProperty('error')  && response['error'].hasOwnProperty("data");
     if(error){
-        slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss subscription check logs',{parse_mode: 'MarkdownV2'});
+        slimbot.sendMessage(TELEGRAMCHATID, 'Error in wss subscription check logs and restart service',{parse_mode: 'MarkdownV2'});
     }
     if(response.hasOwnProperty('result') &&  response['result'].hasOwnProperty('events')){
         const txhash = response['result']['events']['tx.hash']
