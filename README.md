@@ -2,6 +2,11 @@
 Tool to monitor vlad votes in axelar as well as check if external RPC nodes are in sync.
 It sends a telegram alert to the bot configured in case of NO votes or out of sync/down node status.
 
+V2 changes
+- removed websockets to listen for events and uses axelarscan api
+- status check for stale heartneat
+- status check for NO votes
+
 # Prerequisites
 Any installation of external software should be done in **non-root** account
 

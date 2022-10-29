@@ -147,6 +147,7 @@ function getlogo(ethstatus) {
 }
 
 async function checkheartbeat(){
+    console.log('entering checkheartbeat')
     let requestbody = {}
 
     let utcdate = new Date(new Date().toUTCString())
@@ -170,6 +171,7 @@ async function checkheartbeat(){
 }
 
 async function checknovotes(){
+    console.log('entering checknovotes')
     let requestbody = {}
     let utcdate = new Date(new Date().toUTCString())
     utcdate.setMinutes(utcdate.getMinutes() - NOVOTECHECKINTERVALINMINS)
@@ -213,5 +215,5 @@ async function checknovotes(){
 setInterval(checksyncstatus, RPCSYNCCHECKRUNINTERVALINMINS * 60  * 1000,false);
 setInterval(checksyncstatus, DEADMANSSWITCHRUNINTERVALINMINS * 60  * 1000,true);
 checksyncstatus(true);
-setInterval(checknovotes, 3 * 60  * 1000);
-setInterval(checkheartbeat, 3 * 60  * 1000);
+setInterval(checknovotes, 10 * 60  * 1000);
+setInterval(checkheartbeat, 10 * 60  * 1000);
