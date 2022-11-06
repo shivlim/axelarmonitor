@@ -117,7 +117,8 @@ async function checksyncstatus(...deadmanswitchflag){
                 polygonstatus=true;
             }
             if(!ethstatus || !moonbeamstatus || !fantomstatus || !avaxstatus || !polygonstatus || !eth2status || !aurorastatus || !binancestatus || deadmanswitchflag[0]){
-                const alertmsg = `
+                const alertmsg = MSG_PREFIX +
+                                `
                                 __RPC Chain Status__
                                 \`\`\`
                                ETHStatus:     ${getlogo(ethstatus)}
@@ -191,7 +192,6 @@ async function checknovotes(){
         let chain = poll['sender_chain']
         let nooffalsevotesinpoll = 0;
         Object.keys(poll).forEach(key=>{
-            //console.log(key)
             if(key.startsWith('axelar1')){
                 let vote = poll[key]['vote']
                 if(vote === false){
@@ -202,6 +202,7 @@ async function checknovotes(){
         console.log(totalparticipants)
         console.log(nooffalsevotesinpoll)
         console.log(' percentage of false votes ' + (nooffalsevotesinpoll/totalparticipants))
+        //Considerd as NO vote if more than 50% of participants in poll votes YES and you voted NO
         if((nooffalsevotesinpoll/totalparticipants)<=0.5){
             //raise alarm
             slimbot.sendMessage(TELEGRAMCHATID, MSG_PREFIX + ' voted ❌ for ' + chain + ' in poll id '+ pollid,);
@@ -215,5 +216,7 @@ async function checknovotes(){
 setInterval(checksyncstatus, RPCSYNCCHECKRUNINTERVALINMINS * 60  * 1000,false);
 setInterval(checksyncstatus, DEADMANSSWITCHRUNINTERVALINMINS * 60  * 1000,true);
 checksyncstatus(true);
+//Checks no votes every 10 min
 setInterval(checknovotes, 10 * 60  * 1000);
+//Checks stale heartbeat every 10 min
 setInterval(checkheartbeat, 10 * 60  * 1000);

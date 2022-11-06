@@ -4,7 +4,7 @@ It sends a telegram alert to the bot configured in case of NO votes or out of sy
 
 V2 changes
 - removed websockets to listen for events and uses axelarscan api
-- status check for stale heartneat
+- status check for stale heartbeat
 - status check for NO votes
 
 # Prerequisites
@@ -45,12 +45,13 @@ Rename env file to .env file and update properties accordingly.
 
 Following are the properties used in the tool.
 
+
 | Property Name | Description |
 | --- | ----------- |
 | TELEGRAM_BOT_TOKEN | Bot token |
 | TELEGRAM_CHAT_ID | Chat Id |
-| WS_URL | Web Socket URL |
-| TX_URI | URI to retrieve tx |
+| AXELARSCAN_EVMPOLL_API_URL | Axelarscan evm poll url |
+| AXELARSCAN_HEARTBEAT_API_URL | Axelarscan heartbeat url |
 | ETH_RPC_ENDPOINT | ETh RPC endpoint |
 | MOONBEAM_RPC_ENDPOINT | Moonbeam RPC endpoint |
 | FANTOM_RPC_ENDPOINT | Fantom RPC endpoint |
@@ -59,6 +60,9 @@ Following are the properties used in the tool.
 | AXELAR_BROADCASTER_ADDRESS | Axelar broadcaster address which sends votes |
 | RPC_SYNC_CHECK_RUN_INTERVAL_IN_MINS | How often to check sync status of rpc nodes(in minutes) |
 | DEAD_MANS_SWITCH_RUN_INTERVAL_IN_MINS | How often to do Healthcheck of tool to see if its alive(in Minutes)|
+| MSG_PREFIX | Helpful to distinguish messages from different sources if alerts are received on same channel(Ex:testnet/mainnet)|
+
+
 
 # Running the application
 

@@ -1,13 +1,27 @@
 TELEGRAM_BOT_TOKEN="XXX:XXX"
 TELEGRAM_CHAT_ID="XXXXXX"
-WS_URL="ws://X.X.X.X:26657/websocket"
-TX_URI="http://X.X.X.X:1317/cosmos/tx/v1beta1/txs/"
+
 ETH_RPC_ENDPOINT="http://X.X.X.X:8545"
+ETH2_RPC_ENDPOINT="http://X.X.X.X:8545"
 MOONBEAM_RPC_ENDPOINT="http://X.X.X.X:9933"
 FANTOM_RPC_ENDPOINT="http://X.X.X.X:18545"
 AVAX_RPC_ENDPOINT="http://X.X.X.X:9650/ext/info"
 POLYGON_RPC_ENDPOINT="http://X.X.X.X:8545"
-AXELAR_BROADCASTER_ADDRESS="axelar1...."
+BINANCE_RPC_ENDPOINT="http://X.X.X.X:8545"
+AURORA_RPC_ENDPOINT="http://X.X.X.X:10080"
+AXELAR_BROADCASTER_ADDRESS="axelar1......"
+
+# Uncomment below for mainnet
+#AXELARSCAN_EVMPOLL_API_URL="https://api.axelarscan.io/evm-polls"
+#AXELARSCAN_HEARTBEAT_API_URL="https://api.axelarscan.io/heartbeats"
+
+# Uncomment below for mainnet
+#AXELARSCAN_EVMPOLL_API_URL="https://testnet.api.axelarscan.io/evm-polls"
+#AXELARSCAN_HEARTBEAT_API_URL="https://testnet.api.axelarscan.io/heartbeats"
 
 RPC_SYNC_CHECK_RUN_INTERVAL_IN_MINS="10"
 DEAD_MANS_SWITCH_RUN_INTERVAL_IN_MINS="1440"
+NO_VOTE_CHECK_INTERVAL_IN_MINS="5"
+
+# recognisable prefix like testnet/mainnet etc for all messages
+MSG_PREFIX = "testnet"
