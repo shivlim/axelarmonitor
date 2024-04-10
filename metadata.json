@@ -1,7 +1,7 @@
 {
     "name": "Encode Club",
     "website": "https://www.encode.club/",
-    "description": "Encode Club is running a validator for the Eigenlayer ecosystem to directly fund the first dedicated Eigenlayer hackathon and kickstart a series of developer events around re-staking, AVSs and EigenDA.",
+    "description": "Encode Club is running a validator for the Eigenlayer ecosystem to directly fund the first dedicated Eigenlayer hackathon and kickstart a series of developer events around re-staking, AVSs and EigenDA.By restaking to our validator, you will help restake into the future of community building on Eigenlayer.The first Eigenlayer dedicated hackathon is launching in May 2024. This 4-week online event will be free and open to as many developers that want to participate from anywhere in the world and include workshops, AMAs and challenges enabling developers to build their own usecases around the Eigenlayer and re-staking narrative.Encode is a global community of leading developers in Emerging Tech learning and building together since 2018.",
     "logo": "https://github.com/shivlim/axelarmonitor/blob/main/encode.png",
     "twitter": "https://twitter.com/encodeclub"
 }
