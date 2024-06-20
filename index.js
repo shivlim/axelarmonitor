@@ -13,11 +13,13 @@ const MOONBEAMRPCENDPOINT = process.env.MOONBEAM_RPC_ENDPOINT
 const FANTOMRPCENDPOINT = process.env.FANTOM_RPC_ENDPOINT
 const AVAXRPCENDPOINT = process.env.AVAX_RPC_ENDPOINT
 const POLYGONRPCENDPOINT = process.env.POLYGON_RPC_ENDPOINT
+const BINANCERPCENDPOINT = process.env.BINANCE_RPC_ENDPOINT
 const ETH_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
 const MOONBEAM_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
 const FANTOM_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
 const AVAX_RPC_ENDPOINT_REQUEST = {"jsonrpc": "2.0","method": "info.isBootstrapped","params":{"chain":"C"},"id":1}
 const POLYGON_RPC_ENDPOINT_REQUEST = {"id": 1, "jsonrpc": "2.0", "method": "eth_syncing", "params": []}
+const BINANCE_RPC_ENDPOINT_REQUEST = {"id":1, "jsonrpc":"2.0", "method": "eth_syncing", "params":[]}
 const AXELARBROADCASTERADDRESS = process.env.AXELAR_BROADCASTER_ADDRESS
 const TCP_CONNECT_TIMEOUT_IN_MS = 10000
 
@@ -49,6 +51,10 @@ async function checksyncstatus(...deadmanswitchflag){
         {
             "rpcendpoint":POLYGONRPCENDPOINT,
             "rpcendpointrequest":POLYGON_RPC_ENDPOINT_REQUEST
+        },
+        {
+            "rpcendpoint":BINANCERPCENDPOINT,
+            "rpcendpointrequest":BINANCE_RPC_ENDPOINT_REQUEST
         }
 
     ]
@@ -65,11 +71,13 @@ async function checksyncstatus(...deadmanswitchflag){
             let fantomresult = results[2]
             let avaxresult = results[3]
             let polygonresult = results[4]
+            let binanceresult = results[5]
             let ethstatus=false;
             let moonbeamstatus=false;
             let fantomstatus=false;
             let avaxstatus=false;
             let polygonstatus=false;
+            let binancestatus=false;
 
             if(ethresult.status === 'fulfilled' && ethresult.value.data.hasOwnProperty('result') && !ethresult.value.data.result){
                 ethstatus=true;
@@ -86,7 +94,10 @@ async function checksyncstatus(...deadmanswitchflag){
             if(polygonresult.status === 'fulfilled' && polygonresult.value.data.hasOwnProperty('result') && !polygonresult.value.data.result){
                 polygonstatus=true;
             }
-            if(!ethstatus || !moonbeamstatus || !fantomstatus || !avaxstatus || !polygonstatus || deadmanswitchflag[0]){
+            if(binanceresult.status === 'fulfilled' && binanceresult.value.data.hasOwnProperty('result') && !binanceresult.value.data.result){
+                binancestatus=true;
+            }
+            if(!ethstatus || !moonbeamstatus || !fantomstatus || !avaxstatus || !polygonstatus || !binancestatus || deadmanswitchflag[0]){
                 const alertmsg = `
                                 __RPC Chain Status__
                                 \`\`\`
@@ -95,6 +106,7 @@ async function checksyncstatus(...deadmanswitchflag){
                                FantomStatus:  ${getlogo(fantomstatus)}
                                AvaxStatus:    ${getlogo(avaxstatus)}
                                PolygonStatus: ${getlogo(polygonstatus)}
+                               BinanceStatus: ${getlogo(binancestatus)}
                                 \`\`\`
                                 `;
                 slimbot.sendMessage(TELEGRAMCHATID, alertmsg,{parse_mode: 'MarkdownV2'});
